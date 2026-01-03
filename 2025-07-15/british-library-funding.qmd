@@ -1,0 +1,72 @@
+---
+title: "British Library Funding"
+author: "Achilleas Kouventaras"
+format: html
+echo: false
+---
+
+
+```{r}
+#| label: setup
+#| message: false
+#| warning: false
+
+# This block checks for, installs, and loads all required dependencies with the use of `pacman` package manager.
+
+# ensure pacman is installed before proceeding
+if (!require("pacman")) install.packages("pacman")
+
+# load (and install if necessary) all project dependencies
+pacman::p_load(
+  tidytuesdayR,
+  tidyverse, 
+  gt # pretty tables (Grammar of Tables)
+)
+```
+
+```{r}
+#| label: get-data
+#| warning: false
+
+tuesdata <- tidytuesdayR::tt_load("2025-07-15")
+bl_funding <- tuesdata$bl_fundin
+```
+
+
+
+```{r}
+#| label: data-table
+
+# The `gt` (Grammar of Tables) package uses layered syntax like `ggplot2` and allows for precise formatting and styling of tabular data.
+
+bl_funding[c(1:2,10:11)] %>%
+  gt() %>%
+  # add title and subtitle
+  tab_header(
+    title = md("**British Library Funding**"),
+    subtitle = "Analysis of nominal vs. inflation-adjusted income (1998–2023). All GBP figures in millions."
+    ) %>%
+  # add source
+  tab_source_note(source_note = md("*Source: Andy Jackson (anjackson.net) via TidyTuesday (July 15, 2025).*")) %>%
+  # rename columns
+  cols_label(
+    year = "Fiscal Year",
+    nominal_gbp_millions	= "Nominal Value",
+    total_y2000_gbp_millions = "Real Value (Base 2000)",
+    percentage_of_y2000_income = "% Year 2000 Level"
+    ) %>%
+  # align columns
+  cols_align("center") %>%
+  # format percentages
+  fmt_percent(
+    percentage_of_y2000_income, 
+    decimal = 2
+    ) %>%
+  # format currency
+  fmt_currency(
+    columns = c(nominal_gbp_millions, total_y2000_gbp_millions),
+    currency = "GBP", 
+    decimals = 2
+    )
+```
+
