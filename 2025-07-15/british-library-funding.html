@@ -21,6 +21,40 @@ ul.task-list li input[type="checkbox"] {
   margin: 0 0.8em 0.2em -1em; /* quarto-specific, see https://github.com/quarto-dev/quarto-cli/issues/4556 */ 
   vertical-align: middle;
 }
+/* CSS for syntax highlighting */
+pre > code.sourceCode { white-space: pre; position: relative; }
+pre > code.sourceCode > span { display: inline-block; line-height: 1.25; }
+pre > code.sourceCode > span:empty { height: 1.2em; }
+.sourceCode { overflow: visible; }
+code.sourceCode > span { color: inherit; text-decoration: inherit; }
+div.sourceCode { margin: 1em 0; }
+pre.sourceCode { margin: 0; }
+@media screen {
+div.sourceCode { overflow: auto; }
+}
+@media print {
+pre > code.sourceCode { white-space: pre-wrap; }
+pre > code.sourceCode > span { text-indent: -5em; padding-left: 5em; }
+}
+pre.numberSource code
+  { counter-reset: source-line 0; }
+pre.numberSource code > span
+  { position: relative; left: -4em; counter-increment: source-line; }
+pre.numberSource code > span > a:first-child::before
+  { content: counter(source-line);
+    position: relative; left: -1em; text-align: right; vertical-align: baseline;
+    border: none; display: inline-block;
+    -webkit-touch-callout: none; -webkit-user-select: none;
+    -khtml-user-select: none; -moz-user-select: none;
+    -ms-user-select: none; user-select: none;
+    padding: 0 4px; width: 4em;
+  }
+pre.numberSource { margin-left: 3em;  padding-left: 4px; }
+div.sourceCode
+  {   }
+@media screen {
+pre > code.sourceCode > span > a:first-child::before { text-decoration: underline; }
+}
 </style>
 
 
@@ -67,26 +101,131 @@ ul.task-list li input[type="checkbox"] {
 
 </header>
 
+<section id="packages" class="level2">
+<h2 class="anchored" data-anchor-id="packages">Packages</h2>
+<p>Check for, install, and load all required dependencies with the use of <code>pacman</code> package manager.</p>
 <div class="cell">
+<div class="sourceCode cell-code" id="cb1"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="co"># ensure pacman is installed before proceeding</span></span>
+<span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a><span class="cf">if</span> (<span class="sc">!</span><span class="fu">require</span>(<span class="st">"pacman"</span>)) <span class="fu">install.packages</span>(<span class="st">"pacman"</span>)</span>
+<span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-4"><a href="#cb1-4" aria-hidden="true" tabindex="-1"></a><span class="co"># load (and install if necessary) all project dependencies</span></span>
+<span id="cb1-5"><a href="#cb1-5" aria-hidden="true" tabindex="-1"></a>pacman<span class="sc">::</span><span class="fu">p_load</span>(</span>
+<span id="cb1-6"><a href="#cb1-6" aria-hidden="true" tabindex="-1"></a>  tidytuesdayR,</span>
+<span id="cb1-7"><a href="#cb1-7" aria-hidden="true" tabindex="-1"></a>  tidyverse, </span>
+<span id="cb1-8"><a href="#cb1-8" aria-hidden="true" tabindex="-1"></a>  gt <span class="co"># pretty tables (Grammar of Tables)</span></span>
+<span id="cb1-9"><a href="#cb1-9" aria-hidden="true" tabindex="-1"></a>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+</section>
+<section id="data" class="level2">
+<h2 class="anchored" data-anchor-id="data">Data</h2>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb2"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a>tuesdata <span class="ot">&lt;-</span> tidytuesdayR<span class="sc">::</span><span class="fu">tt_load</span>(<span class="st">"2025-07-15"</span>)</span>
+<span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a>bl_funding <span class="ot">&lt;-</span> tuesdata<span class="sc">$</span>bl_fundin</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<p>Get a <code>glimpse()</code> of the data.</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb3"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a><span class="fu">glimpse</span>(bl_funding)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>Rows: 26
+Columns: 17
+$ year                          &lt;dbl&gt; 2023, 2022, 2021, 2020, 2019, 2018, 2017…
+$ nominal_gbp_millions          &lt;dbl&gt; 151.800, 147.600, 141.400, 125.900, 121.…
+$ gia_gbp_millions              &lt;dbl&gt; 127.800, 116.500, 110.412, 108.226, 96.8…
+$ voluntary_gbp_millions        &lt;dbl&gt; 8.200, 14.900, 20.086, 9.524, 8.626, 10.…
+$ investment_gbp_millions       &lt;dbl&gt; 3.000, 0.800, 0.080, 0.196, 0.426, 0.332…
+$ services_gbp_millions         &lt;dbl&gt; 12.800, 15.600, 9.753, 7.584, 13.249, 14…
+$ other_gbp_millions            &lt;dbl&gt; 0.000, 0.000, 1.042, 0.383, 1.925, 3.116…
+$ year_2000_gbp_millions        &lt;dbl&gt; NA, NA, NA, NA, NA, NA, NA, 76.39, 77.59…
+$ inflation_adjustment          &lt;dbl&gt; 1818796.8, 1674338.6, 1534702.6, 1495983…
+$ total_y2000_gbp_millions      &lt;dbl&gt; 83.46177, 88.15421, 92.13511, 84.15870, …
+$ percentage_of_y2000_income    &lt;dbl&gt; 0.7573663, 0.7999475, 0.8360718, 0.76369…
+$ gia_y2000_gbp_millions        &lt;dbl&gt; 70.26623, 69.57971, 71.94358, 72.34439, …
+$ voluntary_y2000_gbp_millions  &lt;dbl&gt; 4.508475, 8.899036, 13.087877, 6.366381,…
+$ investment_y2000_gbp_millions &lt;dbl&gt; 1.64944213, 0.47780060, 0.05212736, 0.13…
+$ services_y2000_gbp_millions   &lt;dbl&gt; 7.037620, 9.317112, 6.354977, 5.069575, …
+$ other_y2000_gbp_millions      &lt;dbl&gt; 0.0000000, 0.0000000, 0.6789589, 0.25601…
+$ gia_as_percent_of_peak_gia    &lt;dbl&gt; 0.7430188, 0.7357593, 0.7607556, 0.76499…</code></pre>
+</div>
+</div>
+<p>Column <code>year_2000_gbp_millions</code> contains funding values from the original blog post at https://blog.dshr.org/2017/08/preservation-is-not-technical-problem.html.</p>
+<p>Lets drop this column; the dataset has been expanded since then.</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb5"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a>bl_funding_clean <span class="ot">&lt;-</span> <span class="fu">select</span>(bl_funding, <span class="sc">!</span>year_2000_gbp_millions)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+</section>
+<section id="visualisations" class="level2">
+<h2 class="anchored" data-anchor-id="visualisations">Visualisations</h2>
+<p>Plot nominal and inflation adjusted funding.</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb6"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a>bl_funding_clean <span class="sc">%&gt;%</span></span>
+<span id="cb6-2"><a href="#cb6-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">ggplot</span>(<span class="fu">aes</span>(year)) <span class="sc">+</span></span>
+<span id="cb6-3"><a href="#cb6-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_line</span>(<span class="fu">aes</span>(<span class="at">y =</span> nominal_gbp_millions), </span>
+<span id="cb6-4"><a href="#cb6-4" aria-hidden="true" tabindex="-1"></a>            <span class="at">colour =</span> <span class="st">"grey"</span>,</span>
+<span id="cb6-5"><a href="#cb6-5" aria-hidden="true" tabindex="-1"></a>            <span class="at">linewidth =</span> <span class="dv">1</span>, </span>
+<span id="cb6-6"><a href="#cb6-6" aria-hidden="true" tabindex="-1"></a>            <span class="at">alpha =</span> <span class="fl">0.5</span>) <span class="sc">+</span></span>
+<span id="cb6-7"><a href="#cb6-7" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_line</span>(<span class="fu">aes</span>(<span class="at">y =</span> total_y2000_gbp_millions), </span>
+<span id="cb6-8"><a href="#cb6-8" aria-hidden="true" tabindex="-1"></a>            <span class="at">colour =</span> <span class="st">"orangered"</span>,</span>
+<span id="cb6-9"><a href="#cb6-9" aria-hidden="true" tabindex="-1"></a>            <span class="at">linewidth =</span> <span class="dv">1</span>) <span class="sc">+</span></span>
+<span id="cb6-10"><a href="#cb6-10" aria-hidden="true" tabindex="-1"></a>  <span class="fu">labs</span>(<span class="at">title =</span> <span class="st">"Inflation Adjusted Funding (Base 2000)"</span>, </span>
+<span id="cb6-11"><a href="#cb6-11" aria-hidden="true" tabindex="-1"></a>       <span class="at">caption =</span> <span class="st">"By 2023, the real-terms income of the British Library is down to 76% of what it was in 2000."</span>) <span class="sc">+</span></span>
+<span id="cb6-12"><a href="#cb6-12" aria-hidden="true" tabindex="-1"></a>  <span class="fu">ylab</span>(<span class="st">"Total Funding"</span>) <span class="sc">+</span></span>
+<span id="cb6-13"><a href="#cb6-13" aria-hidden="true" tabindex="-1"></a>  <span class="fu">xlab</span>(<span class="st">"Fiscal Year"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output-display">
+<p><img src="british-library-funding_files/figure-html/nominal%20over%20inflation%20adjusted-1.png" class="img-fluid" width="672"></p>
+</div>
+</div>
+<p>Pretty table</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb7"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb7-1"><a href="#cb7-1" aria-hidden="true" tabindex="-1"></a><span class="co"># The `gt` (Grammar of Tables) package uses layered syntax like `ggplot2` and allows for precise formatting and styling of tabular data.</span></span>
+<span id="cb7-2"><a href="#cb7-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb7-3"><a href="#cb7-3" aria-hidden="true" tabindex="-1"></a>bl_funding[<span class="fu">c</span>(<span class="dv">1</span><span class="sc">:</span><span class="dv">2</span>,<span class="dv">10</span><span class="sc">:</span><span class="dv">11</span>)] <span class="sc">%&gt;%</span></span>
+<span id="cb7-4"><a href="#cb7-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">gt</span>() <span class="sc">%&gt;%</span></span>
+<span id="cb7-5"><a href="#cb7-5" aria-hidden="true" tabindex="-1"></a>  <span class="co"># add title and subtitle</span></span>
+<span id="cb7-6"><a href="#cb7-6" aria-hidden="true" tabindex="-1"></a>  <span class="fu">tab_header</span>(</span>
+<span id="cb7-7"><a href="#cb7-7" aria-hidden="true" tabindex="-1"></a>    <span class="at">title =</span> <span class="fu">md</span>(<span class="st">"**British Library Funding**"</span>),</span>
+<span id="cb7-8"><a href="#cb7-8" aria-hidden="true" tabindex="-1"></a>    <span class="at">subtitle =</span> <span class="st">"Analysis of nominal vs. inflation-adjusted income (1998–2023). All GBP figures in millions."</span></span>
+<span id="cb7-9"><a href="#cb7-9" aria-hidden="true" tabindex="-1"></a>    ) <span class="sc">%&gt;%</span></span>
+<span id="cb7-10"><a href="#cb7-10" aria-hidden="true" tabindex="-1"></a>  <span class="co"># add source</span></span>
+<span id="cb7-11"><a href="#cb7-11" aria-hidden="true" tabindex="-1"></a>  <span class="fu">tab_source_note</span>(<span class="at">source_note =</span> <span class="fu">md</span>(<span class="st">"*Source: Andy Jackson (anjackson.net) via TidyTuesday (July 15, 2025).*"</span>)) <span class="sc">%&gt;%</span></span>
+<span id="cb7-12"><a href="#cb7-12" aria-hidden="true" tabindex="-1"></a>  <span class="co"># rename columns</span></span>
+<span id="cb7-13"><a href="#cb7-13" aria-hidden="true" tabindex="-1"></a>  <span class="fu">cols_label</span>(</span>
+<span id="cb7-14"><a href="#cb7-14" aria-hidden="true" tabindex="-1"></a>    <span class="at">year =</span> <span class="st">"Fiscal Year"</span>,</span>
+<span id="cb7-15"><a href="#cb7-15" aria-hidden="true" tabindex="-1"></a>    <span class="at">nominal_gbp_millions    =</span> <span class="st">"Nominal Value"</span>,</span>
+<span id="cb7-16"><a href="#cb7-16" aria-hidden="true" tabindex="-1"></a>    <span class="at">total_y2000_gbp_millions =</span> <span class="st">"Real Value (Base 2000)"</span>,</span>
+<span id="cb7-17"><a href="#cb7-17" aria-hidden="true" tabindex="-1"></a>    <span class="at">percentage_of_y2000_income =</span> <span class="st">"% Year 2000 Level"</span></span>
+<span id="cb7-18"><a href="#cb7-18" aria-hidden="true" tabindex="-1"></a>    ) <span class="sc">%&gt;%</span></span>
+<span id="cb7-19"><a href="#cb7-19" aria-hidden="true" tabindex="-1"></a>  <span class="co"># align columns</span></span>
+<span id="cb7-20"><a href="#cb7-20" aria-hidden="true" tabindex="-1"></a>  <span class="fu">cols_align</span>(<span class="st">"center"</span>) <span class="sc">%&gt;%</span></span>
+<span id="cb7-21"><a href="#cb7-21" aria-hidden="true" tabindex="-1"></a>  <span class="co"># format percentages</span></span>
+<span id="cb7-22"><a href="#cb7-22" aria-hidden="true" tabindex="-1"></a>  <span class="fu">fmt_percent</span>(</span>
+<span id="cb7-23"><a href="#cb7-23" aria-hidden="true" tabindex="-1"></a>    percentage_of_y2000_income, </span>
+<span id="cb7-24"><a href="#cb7-24" aria-hidden="true" tabindex="-1"></a>    <span class="at">decimal =</span> <span class="dv">2</span></span>
+<span id="cb7-25"><a href="#cb7-25" aria-hidden="true" tabindex="-1"></a>    ) <span class="sc">%&gt;%</span></span>
+<span id="cb7-26"><a href="#cb7-26" aria-hidden="true" tabindex="-1"></a>  <span class="co"># format currency</span></span>
+<span id="cb7-27"><a href="#cb7-27" aria-hidden="true" tabindex="-1"></a>  <span class="fu">fmt_currency</span>(</span>
+<span id="cb7-28"><a href="#cb7-28" aria-hidden="true" tabindex="-1"></a>    <span class="at">columns =</span> <span class="fu">c</span>(nominal_gbp_millions, total_y2000_gbp_millions),</span>
+<span id="cb7-29"><a href="#cb7-29" aria-hidden="true" tabindex="-1"></a>    <span class="at">currency =</span> <span class="st">"GBP"</span>, </span>
+<span id="cb7-30"><a href="#cb7-30" aria-hidden="true" tabindex="-1"></a>    <span class="at">decimals =</span> <span class="dv">2</span></span>
+<span id="cb7-31"><a href="#cb7-31" aria-hidden="true" tabindex="-1"></a>    )</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output-display">
 
-<div id="kojtuvctvg" style="padding-left:0px;padding-right:0px;padding-top:10px;padding-bottom:10px;overflow-x:auto;overflow-y:auto;width:auto;height:auto;">
-<style>#kojtuvctvg table {
+<div id="tqgpqvzgys" style="padding-left:0px;padding-right:0px;padding-top:10px;padding-bottom:10px;overflow-x:auto;overflow-y:auto;width:auto;height:auto;">
+<style>#tqgpqvzgys table {
   font-family: system-ui, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif, 'Apple Color Emoji', 'Segoe UI Emoji', 'Segoe UI Symbol', 'Noto Color Emoji';
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
 }
 
-#kojtuvctvg thead, #kojtuvctvg tbody, #kojtuvctvg tfoot, #kojtuvctvg tr, #kojtuvctvg td, #kojtuvctvg th {
+#tqgpqvzgys thead, #tqgpqvzgys tbody, #tqgpqvzgys tfoot, #tqgpqvzgys tr, #tqgpqvzgys td, #tqgpqvzgys th {
   border-style: none;
 }
 
-#kojtuvctvg p {
+#tqgpqvzgys p {
   margin: 0;
   padding: 0;
 }
 
-#kojtuvctvg .gt_table {
+#tqgpqvzgys .gt_table {
   display: table;
   border-collapse: collapse;
   line-height: normal;
@@ -112,12 +251,12 @@ ul.task-list li input[type="checkbox"] {
   border-left-color: #D3D3D3;
 }
 
-#kojtuvctvg .gt_caption {
+#tqgpqvzgys .gt_caption {
   padding-top: 4px;
   padding-bottom: 4px;
 }
 
-#kojtuvctvg .gt_title {
+#tqgpqvzgys .gt_title {
   color: #333333;
   font-size: 125%;
   font-weight: initial;
@@ -129,7 +268,7 @@ ul.task-list li input[type="checkbox"] {
   border-bottom-width: 0;
 }
 
-#kojtuvctvg .gt_subtitle {
+#tqgpqvzgys .gt_subtitle {
   color: #333333;
   font-size: 85%;
   font-weight: initial;
@@ -141,7 +280,7 @@ ul.task-list li input[type="checkbox"] {
   border-top-width: 0;
 }
 
-#kojtuvctvg .gt_heading {
+#tqgpqvzgys .gt_heading {
   background-color: #FFFFFF;
   text-align: center;
   border-bottom-color: #FFFFFF;
@@ -153,13 +292,13 @@ ul.task-list li input[type="checkbox"] {
   border-right-color: #D3D3D3;
 }
 
-#kojtuvctvg .gt_bottom_border {
+#tqgpqvzgys .gt_bottom_border {
   border-bottom-style: solid;
   border-bottom-width: 2px;
   border-bottom-color: #D3D3D3;
 }
 
-#kojtuvctvg .gt_col_headings {
+#tqgpqvzgys .gt_col_headings {
   border-top-style: solid;
   border-top-width: 2px;
   border-top-color: #D3D3D3;
@@ -174,7 +313,7 @@ ul.task-list li input[type="checkbox"] {
   border-right-color: #D3D3D3;
 }
 
-#kojtuvctvg .gt_col_heading {
+#tqgpqvzgys .gt_col_heading {
   color: #333333;
   background-color: #FFFFFF;
   font-size: 100%;
@@ -194,7 +333,7 @@ ul.task-list li input[type="checkbox"] {
   overflow-x: hidden;
 }
 
-#kojtuvctvg .gt_column_spanner_outer {
+#tqgpqvzgys .gt_column_spanner_outer {
   color: #333333;
   background-color: #FFFFFF;
   font-size: 100%;
@@ -206,15 +345,15 @@ ul.task-list li input[type="checkbox"] {
   padding-right: 4px;
 }
 
-#kojtuvctvg .gt_column_spanner_outer:first-child {
+#tqgpqvzgys .gt_column_spanner_outer:first-child {
   padding-left: 0;
 }
 
-#kojtuvctvg .gt_column_spanner_outer:last-child {
+#tqgpqvzgys .gt_column_spanner_outer:last-child {
   padding-right: 0;
 }
 
-#kojtuvctvg .gt_column_spanner {
+#tqgpqvzgys .gt_column_spanner {
   border-bottom-style: solid;
   border-bottom-width: 2px;
   border-bottom-color: #D3D3D3;
@@ -226,11 +365,11 @@ ul.task-list li input[type="checkbox"] {
   width: 100%;
 }
 
-#kojtuvctvg .gt_spanner_row {
+#tqgpqvzgys .gt_spanner_row {
   border-bottom-style: hidden;
 }
 
-#kojtuvctvg .gt_group_heading {
+#tqgpqvzgys .gt_group_heading {
   padding-top: 8px;
   padding-bottom: 8px;
   padding-left: 5px;
@@ -256,7 +395,7 @@ ul.task-list li input[type="checkbox"] {
   text-align: left;
 }
 
-#kojtuvctvg .gt_empty_group_heading {
+#tqgpqvzgys .gt_empty_group_heading {
   padding: 0.5px;
   color: #333333;
   background-color: #FFFFFF;
@@ -271,15 +410,15 @@ ul.task-list li input[type="checkbox"] {
   vertical-align: middle;
 }
 
-#kojtuvctvg .gt_from_md > :first-child {
+#tqgpqvzgys .gt_from_md > :first-child {
   margin-top: 0;
 }
 
-#kojtuvctvg .gt_from_md > :last-child {
+#tqgpqvzgys .gt_from_md > :last-child {
   margin-bottom: 0;
 }
 
-#kojtuvctvg .gt_row {
+#tqgpqvzgys .gt_row {
   padding-top: 8px;
   padding-bottom: 8px;
   padding-left: 5px;
@@ -298,7 +437,7 @@ ul.task-list li input[type="checkbox"] {
   overflow-x: hidden;
 }
 
-#kojtuvctvg .gt_stub {
+#tqgpqvzgys .gt_stub {
   color: #333333;
   background-color: #FFFFFF;
   font-size: 100%;
@@ -311,7 +450,7 @@ ul.task-list li input[type="checkbox"] {
   padding-right: 5px;
 }
 
-#kojtuvctvg .gt_stub_row_group {
+#tqgpqvzgys .gt_stub_row_group {
   color: #333333;
   background-color: #FFFFFF;
   font-size: 100%;
@@ -325,15 +464,15 @@ ul.task-list li input[type="checkbox"] {
   vertical-align: top;
 }
 
-#kojtuvctvg .gt_row_group_first td {
+#tqgpqvzgys .gt_row_group_first td {
   border-top-width: 2px;
 }
 
-#kojtuvctvg .gt_row_group_first th {
+#tqgpqvzgys .gt_row_group_first th {
   border-top-width: 2px;
 }
 
-#kojtuvctvg .gt_summary_row {
+#tqgpqvzgys .gt_summary_row {
   color: #333333;
   background-color: #FFFFFF;
   text-transform: inherit;
@@ -343,16 +482,16 @@ ul.task-list li input[type="checkbox"] {
   padding-right: 5px;
 }
 
-#kojtuvctvg .gt_first_summary_row {
+#tqgpqvzgys .gt_first_summary_row {
   border-top-style: solid;
   border-top-color: #D3D3D3;
 }
 
-#kojtuvctvg .gt_first_summary_row.thick {
+#tqgpqvzgys .gt_first_summary_row.thick {
   border-top-width: 2px;
 }
 
-#kojtuvctvg .gt_last_summary_row {
+#tqgpqvzgys .gt_last_summary_row {
   padding-top: 8px;
   padding-bottom: 8px;
   padding-left: 5px;
@@ -362,7 +501,7 @@ ul.task-list li input[type="checkbox"] {
   border-bottom-color: #D3D3D3;
 }
 
-#kojtuvctvg .gt_grand_summary_row {
+#tqgpqvzgys .gt_grand_summary_row {
   color: #333333;
   background-color: #FFFFFF;
   text-transform: inherit;
@@ -372,7 +511,7 @@ ul.task-list li input[type="checkbox"] {
   padding-right: 5px;
 }
 
-#kojtuvctvg .gt_first_grand_summary_row {
+#tqgpqvzgys .gt_first_grand_summary_row {
   padding-top: 8px;
   padding-bottom: 8px;
   padding-left: 5px;
@@ -382,7 +521,7 @@ ul.task-list li input[type="checkbox"] {
   border-top-color: #D3D3D3;
 }
 
-#kojtuvctvg .gt_last_grand_summary_row_top {
+#tqgpqvzgys .gt_last_grand_summary_row_top {
   padding-top: 8px;
   padding-bottom: 8px;
   padding-left: 5px;
@@ -392,11 +531,11 @@ ul.task-list li input[type="checkbox"] {
   border-bottom-color: #D3D3D3;
 }
 
-#kojtuvctvg .gt_striped {
+#tqgpqvzgys .gt_striped {
   background-color: rgba(128, 128, 128, 0.05);
 }
 
-#kojtuvctvg .gt_table_body {
+#tqgpqvzgys .gt_table_body {
   border-top-style: solid;
   border-top-width: 2px;
   border-top-color: #D3D3D3;
@@ -405,7 +544,7 @@ ul.task-list li input[type="checkbox"] {
   border-bottom-color: #D3D3D3;
 }
 
-#kojtuvctvg .gt_footnotes {
+#tqgpqvzgys .gt_footnotes {
   color: #333333;
   background-color: #FFFFFF;
   border-bottom-style: none;
@@ -419,7 +558,7 @@ ul.task-list li input[type="checkbox"] {
   border-right-color: #D3D3D3;
 }
 
-#kojtuvctvg .gt_footnote {
+#tqgpqvzgys .gt_footnote {
   margin: 0px;
   font-size: 90%;
   padding-top: 4px;
@@ -428,7 +567,7 @@ ul.task-list li input[type="checkbox"] {
   padding-right: 5px;
 }
 
-#kojtuvctvg .gt_sourcenotes {
+#tqgpqvzgys .gt_sourcenotes {
   color: #333333;
   background-color: #FFFFFF;
   border-bottom-style: none;
@@ -442,7 +581,7 @@ ul.task-list li input[type="checkbox"] {
   border-right-color: #D3D3D3;
 }
 
-#kojtuvctvg .gt_sourcenote {
+#tqgpqvzgys .gt_sourcenote {
   font-size: 90%;
   padding-top: 4px;
   padding-bottom: 4px;
@@ -450,72 +589,72 @@ ul.task-list li input[type="checkbox"] {
   padding-right: 5px;
 }
 
-#kojtuvctvg .gt_left {
+#tqgpqvzgys .gt_left {
   text-align: left;
 }
 
-#kojtuvctvg .gt_center {
+#tqgpqvzgys .gt_center {
   text-align: center;
 }
 
-#kojtuvctvg .gt_right {
+#tqgpqvzgys .gt_right {
   text-align: right;
   font-variant-numeric: tabular-nums;
 }
 
-#kojtuvctvg .gt_font_normal {
+#tqgpqvzgys .gt_font_normal {
   font-weight: normal;
 }
 
-#kojtuvctvg .gt_font_bold {
+#tqgpqvzgys .gt_font_bold {
   font-weight: bold;
 }
 
-#kojtuvctvg .gt_font_italic {
+#tqgpqvzgys .gt_font_italic {
   font-style: italic;
 }
 
-#kojtuvctvg .gt_super {
+#tqgpqvzgys .gt_super {
   font-size: 65%;
 }
 
-#kojtuvctvg .gt_footnote_marks {
+#tqgpqvzgys .gt_footnote_marks {
   font-size: 75%;
   vertical-align: 0.4em;
   position: initial;
 }
 
-#kojtuvctvg .gt_asterisk {
+#tqgpqvzgys .gt_asterisk {
   font-size: 100%;
   vertical-align: 0;
 }
 
-#kojtuvctvg .gt_indent_1 {
+#tqgpqvzgys .gt_indent_1 {
   text-indent: 5px;
 }
 
-#kojtuvctvg .gt_indent_2 {
+#tqgpqvzgys .gt_indent_2 {
   text-indent: 10px;
 }
 
-#kojtuvctvg .gt_indent_3 {
+#tqgpqvzgys .gt_indent_3 {
   text-indent: 15px;
 }
 
-#kojtuvctvg .gt_indent_4 {
+#tqgpqvzgys .gt_indent_4 {
   text-indent: 20px;
 }
 
-#kojtuvctvg .gt_indent_5 {
+#tqgpqvzgys .gt_indent_5 {
   text-indent: 25px;
 }
 
-#kojtuvctvg .katex-display {
+#tqgpqvzgys .katex-display {
   display: inline-flex !important;
   margin-bottom: 0.75em !important;
 }
 
-#kojtuvctvg div.Reactable > div.rt-table > div.rt-thead > div.rt-tr.rt-tr-group-header > div.rt-th-group:after {
+#tqgpqvzgys div.Reactable > div.rt-table > div.rt-thead > div.rt-tr.rt-tr-group-header > div.rt-th-group:after {
   height: 0px !important;
 }
 </style>
@@ -642,7 +781,7 @@ ul.task-list li input[type="checkbox"] {
   </tbody>
   <tfoot class="gt_sourcenotes">
     <tr>
-      <td class="gt_sourcenote" colspan="4"><span data-qmd-base64="PGVtPlNvdXJjZTogQW5keSBKYWNrc29uIChhbmphY2tzb24ubmV0KSB2aWEgVGlkeVR1ZXNkYXkgKEp1bHkgMTUsIDIwMjUpPC9lbT4="><span class="gt_from_md"><em>Source: Andy Jackson (anjackson.net) via TidyTuesday (July 15, 2025)</em></span></span></td>
+      <td class="gt_sourcenote" colspan="4"><span data-qmd-base64="PGVtPlNvdXJjZTogQW5keSBKYWNrc29uIChhbmphY2tzb24ubmV0KSB2aWEgVGlkeVR1ZXNkYXkgKEp1bHkgMTUsIDIwMjUpLjwvZW0+"><span class="gt_from_md"><em>Source: Andy Jackson (anjackson.net) via TidyTuesday (July 15, 2025).</em></span></span></td>
     </tr>
   </tfoot>
   
@@ -650,6 +789,7 @@ ul.task-list li input[type="checkbox"] {
 </div>
 </div>
 </div>
+</section>
 
 </main>
 <!-- /main column -->

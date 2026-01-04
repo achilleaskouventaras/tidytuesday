@@ -2,16 +2,16 @@
 title: "British Library Funding"
 author: "Achilleas Kouventaras"
 format: html
-echo: false
 ---
 
+## Packages
+
+Check for, install, and load all required dependencies with the use of `pacman` package manager.
 
 ```{r}
 #| label: setup
 #| message: false
 #| warning: false
-
-# This block checks for, installs, and loads all required dependencies with the use of `pacman` package manager.
 
 # ensure pacman is installed before proceeding
 if (!require("pacman")) install.packages("pacman")
@@ -24,18 +24,65 @@ pacman::p_load(
 )
 ```
 
+## Data
+
 ```{r}
 #| label: get-data
+#| message: false
 #| warning: false
 
 tuesdata <- tidytuesdayR::tt_load("2025-07-15")
 bl_funding <- tuesdata$bl_fundin
 ```
 
+Get a `glimpse()` of the data.
 
+```{r}
+#| label: glimpse-data
+#| warning: false
+
+glimpse(bl_funding)
+```
+
+Column `year_2000_gbp_millions` contains funding values from the original blog post at https://blog.dshr.org/2017/08/preservation-is-not-technical-problem.html. 
+
+Lets drop this column; the dataset has been expanded since then.
+
+```{r}
+#| label: drop column
+#| message: false
+#| warning: false
+
+bl_funding_clean <- select(bl_funding, !year_2000_gbp_millions)
+```
+
+## Visualisations
+
+Plot nominal and inflation adjusted funding. 
+
+```{r}
+#| label: nominal over inflation adjusted
+#| warning: true
+
+bl_funding_clean %>%
+  ggplot(aes(year)) +
+  geom_line(aes(y = nominal_gbp_millions), 
+            colour = "grey",
+            linewidth = 1, 
+            alpha = 0.5) +
+  geom_line(aes(y = total_y2000_gbp_millions), 
+            colour = "orangered",
+            linewidth = 1) +
+  labs(title = "Inflation Adjusted Funding (Base 2000)", 
+       caption = "By 2023, the real-terms income of the British Library is down to 76% of what it was in 2000.") +
+  ylab("Total Funding") +
+  xlab("Fiscal Year")
+```
+Pretty table
 
 ```{r}
 #| label: data-table
+#| warning: false
 
 # The `gt` (Grammar of Tables) package uses layered syntax like `ggplot2` and allows for precise formatting and styling of tabular data.
 
@@ -69,4 +116,5 @@ bl_funding[c(1:2,10:11)] %>%
     decimals = 2
     )
 ```
+
 
